@@ -40,7 +40,7 @@ def get_all_legal_moves(board: object, color: str):
                         moves += [((row, col), dest, piece) for piece in ["bQ","bR","bB","bN"]]
                     else:
                         moves.append(((row, col), dest))
-            else:    
+            else:
                 moves += [((row, col), dest) for dest in legal]
     # for the king
     row, col = king_pos//8, king_pos%8

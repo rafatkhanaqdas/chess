@@ -1,5 +1,3 @@
-import json
-
 class Board:
     def __init__(self):
         self.board = ["bR","bN","bB","bQ","bK","bB","bN","bR",
@@ -30,7 +28,7 @@ class Board:
         self.b_Kside = True
         self.b_Qside = True
         # for en passant
-        self.en_passant = {}
+        self.en_passant = None
 
     def print_board(self):
         for row in range(0,8):
@@ -55,13 +53,13 @@ class Board:
         piece = self.board[src_index]
         self.board[src_index] = None
         captured_piece = self.board[dest_index]
-        undo_list = [captured_piece, self.w_Kside, self.w_Qside, self.b_Kside, self.b_Qside]
+        undo_list = [captured_piece, self.w_Kside, self.w_Qside, self.b_Kside, self.b_Qside, self.en_passant]
         self.board[dest_index] = piece
         if piece not in {"wK","bK"}:
             self.piece_pos[piece].remove(src_index)
             if piece == "wP" and src[0] - dest[0] == 2:
                 self.en_passant = src[0]*8+8+src[1]
-            if promoted_piece:
+            elif promoted_piece:
                 self.piece_pos[promoted_piece].append(dest_index)
                 self.board[dest_index] = promoted_piece
             else:
@@ -112,8 +110,9 @@ class Board:
                 self.b_Kside =  False
             elif dest_index == 0 and captured_piece == "bR":
                 self.b_Qside = False
+        self.en_passant = None
         return undo_list
-    
+
     def undo_move(self, move: tuple, undo: list):
         if len(move) == 2:
             dest, src = move
@@ -145,7 +144,7 @@ class Board:
                 self.board[59] = None
                 self.board[56] = "wR"
                 self.piece_pos["wR"].remove(59)
-                self.piece_pos["wR"].append(56)            
+                self.piece_pos["wR"].append(56)
         else:
             self.bk_pos = dest_index
             if src[1] - dest[1] == 2 and not self.b_Kside:
@@ -165,3 +164,4 @@ class Board:
         self.w_Qside = undo[2]
         self.b_Kside = undo[3]
         self.b_Qside = undo[4]
+        self.en_passant = undo[5]
